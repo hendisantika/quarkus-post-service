@@ -46,4 +46,12 @@ public class PostRepository implements PanacheRepositoryBase<Post, String> {
                     .list();
         }
     }
+
+    public Long countByKeyword(String q) {
+        if (q == null || q.trim().isEmpty()) {
+            return this.count();
+        } else {
+            return this.count("title like ?1 or content like ?1", '%' + q + '%');
+        }
+    }
 }
