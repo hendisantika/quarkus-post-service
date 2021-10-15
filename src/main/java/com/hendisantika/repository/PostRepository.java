@@ -34,4 +34,16 @@ public class PostRepository implements PanacheRepositoryBase<Post, String> {
 //                    .limit(limit);
 //        }
 //    }
+
+    public List<Post> findByKeyword(String q, int offset, int limit) {
+        if (q == null || q.trim().isEmpty()) {
+            return this.findAll(Sort.descending("createdAt"))
+                    .page(offset / limit, limit)
+                    .list();
+        } else {
+            return this.find("title like ?1 or content like ?1", Sort.descending("createdAt"), '%' + q + '%')
+                    .page(offset / limit, limit)
+                    .list();
+        }
+    }
 }
