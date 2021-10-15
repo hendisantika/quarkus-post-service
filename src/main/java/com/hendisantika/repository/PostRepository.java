@@ -2,9 +2,12 @@ package com.hendisantika.repository;
 
 import com.hendisantika.domain.Post;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+import io.quarkus.hibernate.orm.panache.runtime.JpaOperations;
 import io.quarkus.panache.common.Sort;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -52,6 +55,17 @@ public class PostRepository implements PanacheRepositoryBase<Post, String> {
             return this.count();
         } else {
             return this.count("title like ?1 or content like ?1", '%' + q + '%');
+        }
+    }
+
+    @Transactional
+    public Post save(Post post) {
+        EntityManager em = JpaOperations.INSTANCE.getEntityManager();
+        if (post.getId() == null) {
+            em.persist(post);
+            return post;
+        } else {
+            return em.merge(post);
         }
     }
 }
